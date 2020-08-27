@@ -1,3 +1,6 @@
 {
-    "@aws-cdk/core:newStyleStackSynthesis": true
+    "@aws-cdk/core:newStyleStackSynthesis": true,
+    "stack:AccountStack": {
+        "bucketArnParameterName": "BucketArn"
+    }
 }

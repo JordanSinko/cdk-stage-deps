@@ -1,33 +1,37 @@
-import { Bucket, IBucket } from '@aws-cdk/aws-s3';
+import { Bucket, IBucket } from "@aws-cdk/aws-s3";
+import { StringParameter } from "@aws-cdk/aws-ssm/lib/parameter";
 import {
-  Construct,
-  RemovalPolicy,
-  Stack,
-  StackProps,
-  Stage,
-  StageProps,
-} from '@aws-cdk/core';
+    Construct,
+    RemovalPolicy,
+    Stack,
+    StackProps,
+    Stage,
+    StageProps,
+} from "@aws-cdk/core";
 
 class AccountStack extends Stack {
-  readonly bucket: IBucket;
+    constructor(scope: Construct, id: string, props: StackProps) {
+        super(scope, id, props);
 
-  constructor(scope: Construct, id: string, props: StackProps) {
-    super(scope, id, props);
+        const { bucketArnParameterName } = this.node.tryGetContext(
+            `stack:${id}`
+        );
 
-    this.bucket = new Bucket(this, 'Bucket', {
-      removalPolicy: RemovalPolicy.DESTROY,
-    });
-  }
+        const bucket = new Bucket(this, "Bucket", {
+            removalPolicy: RemovalPolicy.DESTROY,
+        });
+
+        new StringParameter(this, "Parameter", {
+            parameterName: bucketArnParameterName,
+            stringValue: bucket.bucketArn,
+        });
+    }
 }
 
 export default class AccountStage extends Stage {
-  readonly bucket: IBucket;
+    constructor(scope: Construct, id: string, props: StageProps) {
+        super(scope, id, props);
 
-  constructor(scope: Construct, id: string, props: StageProps) {
-    super(scope, id, props);
-
-    const { bucket } = new AccountStack(this, 'AccountStack', {});
-
-    this.bucket = bucket;
-  }
+        new AccountStack(this, "AccountStack", {});
+    }
 }
