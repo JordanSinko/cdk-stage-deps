@@ -1,0 +1,14 @@
+{
+  "name": "cdk-stage-deps",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-cdk/aws-codepipeline": "^1.60.0",
+    "@aws-cdk/aws-codepipeline-actions": "^1.60.0",
+    "@aws-cdk/aws-lambda": "^1.60.0",
+    "@aws-cdk/aws-s3": "^1.60.0",
+    "@aws-cdk/core": "^1.60.0",
+    "@aws-cdk/pipelines": "^1.60.0"
+  }
+}
