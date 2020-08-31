@@ -32,12 +32,27 @@ class PipelineStack extends Stack {
         });
 
         pipeline.addApplicationStage(
-            new AccountStage(this, "AccountStage", {})
+            new AccountStage(this, "AccountStage", {
+                env: { account: "123456789", region: "us-east-1" },
+            })
         );
 
-        pipeline.addApplicationStage(new AppStage(this, "AppStage", {}));
+        pipeline.addApplicationStage(
+            new AppStage(this, "AppStage", {
+                env: { account: "123456789", region: "us-east-1" },
+            })
+        );
+
+        pipeline.addApplicationStage(
+            new AppStage(this, "AppStage2", {
+                env: { account: "123456789", region: "us-east-2" },
+            })
+        );
     }
 }
 
 const app = new App();
-new PipelineStack(app, "PipelineStack", {});
+
+new PipelineStack(app, "PipelineStack", {
+    env: { account: "123456789", region: "us-east-1" },
+});

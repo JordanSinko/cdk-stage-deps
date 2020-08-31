@@ -2,6 +2,7 @@ import { Construct, Stack, StackProps, Stage, StageProps } from "@aws-cdk/core";
 import { Code, Function as AwsFunction, Runtime } from "@aws-cdk/aws-lambda";
 import { Bucket, IBucket } from "@aws-cdk/aws-s3";
 import { StringParameter } from "@aws-cdk/aws-ssm/lib/parameter";
+import { SsmParameterReader } from "./SsmParameterReader";
 
 interface AppStackProps extends StackProps {
     //bucket: IBucket;
@@ -15,17 +16,19 @@ class AppStack extends Stack {
             "stack:AccountStack"
         );
 
-        console.log(bucketArnParameterName);
+        const parameter = new SsmParameterReader(this, "Parameter", {
+            region: "us-east-1",
+            parameters: {
+                Name: bucketArnParameterName,
+                WithDecryption: false,
+            },
+        });
 
-        const bucketArn = StringParameter.fromStringParameterAttributes(
+        const bucket = Bucket.fromBucketArn(
             this,
-            "Parameter",
-            {
-                parameterName: bucketArnParameterName,
-            }
-        ).stringValue;
-
-        const bucket = Bucket.fromBucketArn(this, "Bucket", bucketArn);
+            "Bucket",
+            parameter.getParameterValue()
+        );
 
         const handler = new AwsFunction(this, "Function", {
             code: Code.fromInline(`export.handler = async => 'Hello, world!'`),
